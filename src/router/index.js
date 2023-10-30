@@ -8,7 +8,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'chat',
-      component: defineAsyncComponent(() => import(`../views/chat.vue`)),
+      component: defineAsyncComponent(() => import(`../views/movemap.vue`)),
       meta: {
         title: '易聊',
       },

@@ -13,9 +13,11 @@
     "axios": "^1.5.1",
     "element-plus": "^2.3.14",
     "google-protobuf": "^3.21.2",
+    "mockjs": "^1.1.0",
     "protobufjs": "^7.2.5",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "zrender": "^5.4.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

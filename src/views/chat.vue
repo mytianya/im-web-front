@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import { ref, onMounted } from 'vue'
 const msgId = ref('0')
 var ws;
@@ -20,6 +20,7 @@ const wsOpen = () => {
   // Web Socket 已连接上，使用 send() 方法发送数据
   ws.send(msg.serializeBinary());
 }
+
 onMounted(() => {
   ws = new WebSocket("ws://localhost:8000/ws")
   ws.onopen = wsOpen
@@ -27,7 +28,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>{{ msgId }}</div>
+  <div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+#canvas{
+  width: 300px;
+  height: 200px;
+}
+</style>
