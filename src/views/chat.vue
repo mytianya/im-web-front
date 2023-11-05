@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 const msgId = ref('0')
-var ws;
+var ws:WebSocket;
 var fromuid='dsys'
 const wsOpen = () => {
   console.log("ws open")
@@ -33,8 +33,4 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#canvas{
-  width: 300px;
-  height: 200px;
-}
 </style>
