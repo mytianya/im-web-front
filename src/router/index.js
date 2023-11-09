@@ -6,9 +6,9 @@ const router = createRouter({
   history: createWebHistory(),  // history 模式
   routes: [
     {
-      path: '/',
+      path: '/demo/movemap',
       name: 'chat',
-      component: defineAsyncComponent(() => import(`../views/movemap.vue`)),
+      component: defineAsyncComponent(() => import(`../views/demo/movemap.vue`)),
       meta: {
         title: '易聊',
       },
