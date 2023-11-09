@@ -7,10 +7,18 @@ const router = createRouter({
   routes: [
     {
       path: '/demo/movemap',
-      name: 'chat',
+      name: 'movemap',
       component: defineAsyncComponent(() => import(`../views/demo/movemap.vue`)),
       meta: {
-        title: '易聊',
+        title: 'movemap',
+      },
+    },
+    {
+      path: '/demo/login',
+      name: 'login',
+      component: defineAsyncComponent(() => import(`../views/demo/login.vue`)),
+      meta: {
+        title: 'login',
       },
     },
     {
