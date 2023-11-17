@@ -22,6 +22,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/',
+      name: 'index',
+      component: defineAsyncComponent(() => import(`../views/index.vue`)),
+      meta: {
+        title: 'index',
+      },
+    },
+    {
       path: '/*',
       redirect: '/',
     },
