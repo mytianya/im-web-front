@@ -6,19 +6,19 @@
         </el-aside>
         <el-container>
           <el-header>
-              <div class="text-mid">文字水平垂直居中</div>
+              <div class="text-mid">音乐空间</div>
           </el-header>
           <el-main>
             <el-form :model="loginForm">
               <el-form-item prop="username">
-                <el-input v-model="loginForm.username" placeholder="text1"></el-input>
+                <el-input v-model="loginForm.username" placeholder="用户名"></el-input>
               </el-form-item>
               <el-form-item prop="password">
-                <el-input type="password" v-model="loginForm.password" placeholder="text2"></el-input>
+                <el-input type="password" v-model="loginForm.password" placeholder="密码"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" class="login-btn" @click="handleSubmit">
-                  居中
+                  登录
                 </el-button>
               </el-form-item>
 
@@ -62,13 +62,16 @@ const handleSubmit = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #990033;
 }
 
 .login-wrapper {
   max-width: 800px;
+  box-shadow: 10px 5px 5px black;
 }
 .login-main{
-  background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+  background-color: #CC99CC;
+
 }
 .text-mid{
   height:60px;

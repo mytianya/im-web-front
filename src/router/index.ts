@@ -24,7 +24,7 @@ const router = createRouter({
     {
       path: '/demo/v1',
       name: 'v1',
-      component: defineAsyncComponent(() => import(`../views/demo/v1.vue`)),
+      component: defineAsyncComponent(() => import(`../views/demo/login.vue`)),
       meta: {
         title: 'v1',
       },
