@@ -2,23 +2,23 @@
   <div class="login-container">
     <div class="login-wrapper">
       <el-container class="login-main">
-        <el-aside> <el-image :src="url" :fit="fit" />
+        <el-aside style="overflow: hidden;"> <el-image :src="url" :fit="fit" style="height: 100%;"/>
         </el-aside>
         <el-container>
           <el-header>
-          
+              <div class="text-mid">文字水平垂直居中</div>
           </el-header>
           <el-main>
             <el-form :model="loginForm">
               <el-form-item prop="username">
-                <el-input v-model="loginForm.username" placeholder="用户名"></el-input>
+                <el-input v-model="loginForm.username" placeholder="text1"></el-input>
               </el-form-item>
               <el-form-item prop="password">
-                <el-input type="password" v-model="loginForm.password" placeholder="密码"></el-input>
+                <el-input type="password" v-model="loginForm.password" placeholder="text2"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" class="login-btn" @click="handleSubmit">
-                  登录
+                  居中
                 </el-button>
               </el-form-item>
 
@@ -37,7 +37,7 @@ import { login } from "@/api/user";
 import { encrypt } from '@/utils/encrypt';
 const fit = 'fill';
 const url =
-  'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg';
+  'https://img1.baidu.com/it/u=3636959033,277400010&fm=253&fmt=auto&app=138&f=JPEG?w=499&h=333';
 console.log(encrypt)
 const loginForm = reactive({
   username: "",
@@ -59,19 +59,22 @@ const handleSubmit = () => {
   margin: 0px;
   width: 100%;
   height: 100vh;
- 
-}
-
-.login-wrapper {
-  padding-top: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: auto;
+}
+
+.login-wrapper {
   max-width: 800px;
 }
 .login-main{
   background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+}
+.text-mid{
+  height:60px;
+  line-height: 60px;
+  margin:auto;
+  text-align: center;
 }
 .login-btn {
   width: 100%;

@@ -2,8 +2,8 @@ import {createRouter, createWebHistory, createWebHashHistory} from 'vue-router'
 import { defineAsyncComponent } from 'vue'
 
 const router = createRouter({ 
-  // history: createWebHashHistory(),  // hash 模式
-  history: createWebHistory(),  // history 模式
+   history: createWebHashHistory(),  // hash 模式
+ // history: createWebHistory(),  // history 模式
   routes: [
     {
       path: '/demo/movemap',
@@ -19,6 +19,14 @@ const router = createRouter({
       component: defineAsyncComponent(() => import(`../views/demo/login.vue`)),
       meta: {
         title: 'login',
+      },
+    },
+    {
+      path: '/demo/v1',
+      name: 'v1',
+      component: defineAsyncComponent(() => import(`../views/demo/v1.vue`)),
+      meta: {
+        title: 'v1',
       },
     },
     {
