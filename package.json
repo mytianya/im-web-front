@@ -10,6 +10,7 @@
     "proto": "npx pbjs -t json-module -w commonjs -o src/proto/message.js src/proto/message.proto"
   },
   "dependencies": {
+    "aplayer": "^1.10.1",
     "axios": "^1.5.1",
     "element-plus": "^2.3.14",
     "google-protobuf": "^3.21.2",
