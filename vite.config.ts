@@ -6,6 +6,7 @@ import path from 'path'
 export default defineConfig({
   //base:'./',
   server: {
+    host:'192.168.22.90',
     proxy: {
       "/api": {
         target: "http://localhost:8888",

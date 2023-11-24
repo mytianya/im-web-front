@@ -22,11 +22,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/demo/v1',
-      name: 'v1',
-      component: defineAsyncComponent(() => import(`../views/demo/v1.vue`)),
+      path: '/demo/music',
+      name: 'music',
+      component: defineAsyncComponent(() => import(`../views/demo/music.vue`)),
       meta: {
-        title: 'v1',
+        title: 'music',
       },
     },
     {
