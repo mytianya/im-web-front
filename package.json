@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node --max_old_space_size=1024000 ./node_modules/vite/bin/vite.js build --no-cache",
+    "build": "node --max_old_space_size=1024000 ./node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "proto": "npx pbjs -t json-module -w commonjs -o src/proto/message.js src/proto/message.proto"
   },
