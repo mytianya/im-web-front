@@ -30,6 +30,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/demo/square',
+      name: 'square',
+      component: defineAsyncComponent(() => import(`../views/demo/music_square.vue`)),
+      meta: {
+        title: 'square',
+      },
+    },
+    {
       path: '/',
       name: 'index',
       component: defineAsyncComponent(() => import(`../views/index.vue`)),
