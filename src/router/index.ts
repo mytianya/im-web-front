@@ -38,6 +38,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/demo/audio',
+      name: 'audio',
+      component: defineAsyncComponent(() => import(`../views/demo/music_audio.vue`)),
+      meta: {
+        title: 'audio',
+      },
+    },
+    {
       path: '/',
       name: 'index',
       component: defineAsyncComponent(() => import(`../views/index.vue`)),
