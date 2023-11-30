@@ -21,7 +21,7 @@ export default {
     props: {
         audioUrl: {
             type: String,
-            default: "http://127.0.0.1:8888/v1/music/audioSource/746",
+            default: "http://127.0.0.1:8888/v1/music/audioSource/561",
             required: true,
         },
         playStat: {
@@ -52,16 +52,21 @@ export default {
         }
         const onAudioProgress = () => {
             if (audioEL.value.buffered.length) {
-                playStat.loadedTime = audioEL.value.buffered.end(audioEL.value.buffered.length - 1)
+                playStat.value.loadedTime = audioEL.value.buffered.end(audioEL.value.buffered.length - 1)
             } else {
-                playStat.loadedTime = 0
+                playStat.value.loadedTime = 0
             }
             console.log(playStat)
+        }
+        const onAudioTimeUpdate=()=>{
+            playStat.value.playedTime = audioEL.value.currentTime
         }
         const initAudio = () => {
             console.log(audioEL.value)
             audioEL.value.addEventListener("durationchange", onAudioDurationChange);
             audioEL.value.addEventListener('progress', onAudioProgress)
+            audioEL.value.addEventListener('timeupdate',onAudioTimeUpdate)
+
 
         }
         onMounted(() => {
