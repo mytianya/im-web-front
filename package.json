@@ -10,9 +10,11 @@
     "proto": "npx pbjs -t json-module -w commonjs -o src/proto/message.js src/proto/message.proto"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "aplayer": "^1.10.1",
     "axios": "^1.5.1",
     "element-plus": "^2.3.14",
+    "fast-glob": "^3.3.2",
     "google-protobuf": "^3.21.2",
     "jsencrypt": "^3.3.2",
     "libflacjs": "^5.4.0",
@@ -28,9 +30,11 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "babel-plugin-component": "^1.1.1",
     "cross-env": "^7.0.3",
+    "sass": "^1.69.5",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-obfuscator": "^1.0.5",
+    "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^1.8.5"
   }
 }

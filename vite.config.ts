@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import {viteObfuscateFile} from 'vite-plugin-obfuscator'
+import {createSvgIconsPlugin} from 'vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 // https://vitejs.dev/config/
@@ -22,8 +23,21 @@ export default defineConfig({
       '@':path.resolve(__dirname,'src'),
     }
   },
+  css:{
+    preprocessorOptions:{
+      scss:{
+        additionalData:'@import "@/styles/globalVar.scss";'
+      }
+    }
+  },
   plugins: [
     vue(),
+    createSvgIconsPlugin({
+      // 指定要缓存的文件夹
+      iconDirs: [path.resolve(process.cwd(), 'src/assets/')],
+      // 指定symbolId格式
+      symbolId: '[name]'
+    })
     // viteObfuscateFile({
     //   compact: true,
     //   controlFlowFlattening: false,

@@ -16,13 +16,14 @@
 <script lang="ts" setup>
 import 'APlayer/dist/APlayer.min.css';
 import APlayer from 'APlayer';
-import { nextTick, ref, onMounted } from 'vue';
+import { nextTick, ref } from 'vue';
 import { listMusic } from '@/api/music';
 var musicData = ref([]);
 var musicName
 var audioUrl
 var coverUrl
 var lyricUrl
+console.log(".................")
 nextTick(() => {
     listMusic({ "pageIndex": 1, "pageSize": 20 }).then(res => {
         musicData.value = res.data.MusicList;
