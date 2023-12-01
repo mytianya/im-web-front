@@ -18,8 +18,8 @@
             <el-col :span="12">
                 <div class="a-wrapper">
                     <div class="a-bar">
-                        <div class="a-loaded" :style="{width: `${loadProgress * 100}%`}"></div>
-                        <div class="a-played" :style="{width: `${playProgress * 100}%`}">
+                        <div class="a-loaded" :style="{ width: `${loadProgress * 100}%` }"></div>
+                        <div class="a-played" :style="{ width: `${playProgress * 100}%` }">
                             <span class="a-load-icon">
                                 <!-- <span class="a-loading-icon">
                                 </span> -->
@@ -29,34 +29,33 @@
                 </div>
             </el-col>
         </el-row>
-        <audio :src="audioUrl" ref="audioEL" controls></audio>
+        <audio :src="audioUrl" ref="audioEL"></audio>
     </div>
 </template>
     
 <script lang="ts">
 
-import { onMounted, ref, toRefs, computed } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 export default {
     name: "auido-player",
     props: {
         audioUrl: {
             type: String,
-            default: "http://127.0.0.1:8888/v1/music/audioSource/746",
+            default: "http://127.0.0.1:8888/v1/music/audioSource/588",
             required: true,
         },
-        playStat: {
-            type: Object,
-            default: {
+    },
+    setup(props) {
+        const audioEL= ref(null)
+        const isPlaying = ref(false)
+        const playStat = reactive(
+            {
                 duration: 1,
                 loadedTime: 0,
                 playedTime: 0,
             }
-        },
-    },
-    setup(props) {
-        const audioEL = ref(null)
-        const isPlaying = ref(false)
-        const { playStat } = toRefs(props)
+        )
+        console.log(playStat)
         const play = () => {
             audioEL.value.play()
             console.log("play...........")
@@ -71,21 +70,21 @@ export default {
             audioEL.value.currentTime = currentTime
         }
         const onAudioDurationChange = () => {
-            playStat.value.duration = audioEL.value.duration
+            playStat.duration = audioEL.value.duration
         }
         const onAudioProgress = () => {
             console.log("onAudioProgress........")
             if (audioEL.value.buffered.length) {
-                playStat.value.loadedTime = audioEL.value.buffered.end(audioEL.value.buffered.length - 1)
+                playStat.loadedTime = audioEL.value.buffered.end(audioEL.value.buffered.length - 1)
             } else {
-                playStat.value.loadedTime = 0
+                playStat.loadedTime = 0
             }
         }
         const onAudioTimeUpdate = () => {
-            playStat.value.playedTime = audioEL.value.currentTime
+            playStat.playedTime = audioEL.value.currentTime
         }
         const initAudio = () => {
-            console.log(audioEL)
+            console.log(audioEL.value)
             audioEL.value.addEventListener("durationchange", onAudioDurationChange);
             audioEL.value.addEventListener('progress', onAudioProgress)
             audioEL.value.addEventListener('timeupdate', onAudioTimeUpdate)
@@ -93,16 +92,16 @@ export default {
         onMounted(() => {
             initAudio()
         })
-        const loadProgress=computed(()=>{
-            console.log(playStat.value.loadedTime / playStat.value.duration)
-            return playStat.value.loadedTime / playStat.value.duration
+        const loadProgress = computed(() => {
+            console.log(playStat.loadedTime / playStat.duration)
+            return playStat.loadedTime / playStat.duration
         })
-        const playProgress=computed(()=>{
-            console.log(playStat.value.playedTime / playStat.value.duration)
-            return playStat.value.playedTime / playStat.value.duration
+        const playProgress = computed(() => {
+            console.log(playStat.playedTime / playStat.duration)
+            return playStat.playedTime / playStat.duration
 
         })
-        return { audioEL,isPlaying, play, pause, setCurrentTime,loadProgress,playProgress}
+        return { audioEL, playStat,isPlaying, play, pause, setCurrentTime, loadProgress, playProgress }
     },
 }
 
