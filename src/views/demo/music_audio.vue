@@ -35,17 +35,7 @@
 <script lang="ts">
 
 import { onMounted, ref, reactive, computed } from 'vue';
-function getElementViewLeft(element) {
-    let actualLeft = element.offsetLeft
-    let current = element.offsetParent
-    let elementScrollLeft
-    while (current !== null) {
-        actualLeft += current.offsetLeft
-        current = current.offsetParent
-    }
-    elementScrollLeft = document.body.scrollLeft + document.documentElement.scrollLeft
-    return actualLeft - elementScrollLeft
-}
+import { getElementViewLeft } from '@/utils/music_helper'
 export default {
     name: "auido-player",
     props: {
@@ -65,25 +55,47 @@ export default {
                 playedTime: 0,
                 isPlaying: false,
                 isLoading: false,
+                audioPlayPromise: Promise.resolve(),
+                rejectPlayPromise: null,
             }
         )
-        console.log(playStat)
         const play = () => {
-            const playPromise = audioEL.value.play()
-            if (playPromise) {
-                playPromise.then(() => {
-                    playStat.isPlaying = true;
-                }).catch(() => {
-                    playStat.isPlaying = true;
-                    playStat.isLoading = true;
+            const promise = audioEL.value.play()
+            if (promise) {
+                return playStat.audioPlayPromise = new Promise((resolve, reject) => {
+                    // rejectPlayPromise is to force reject audioPlayPromise if it's still pending when pause() is called
+                    playStat.rejectPlayPromise = reject
+                    promise.then((res) => {
+                        playStat.rejectPlayPromise = null
+                        playStat.isPlaying = true;
+                        resolve(res)
+                    }).catch((err) => {
+                        console.log(err)
+                        playStat.isPlaying = false;
+                        playStat.isLoading = false;
+                    })
                 })
             }
         }
         const pause = () => {
-            audioEL.value.pause();
-            console.log("pause...........")
-            playStat.isPlaying = false;
-            playStat.isLoading = false;
+            playStat.audioPlayPromise
+                .then(() => {
+                    audioEL.value.pause()
+                    playStat.isPlaying = false;
+                    playStat.isLoading = false;
+                })
+                // Avoid force rejection throws Uncaught
+                .catch(() => {
+                    audioEL.value.pause()
+                    playStat.isPlaying = false;
+                    playStat.isLoading = false;
+                })
+            // audioPlayPromise is still pending
+            if (playStat.rejectPlayPromise) {
+                // force reject playPromise
+                playStat.rejectPlayPromise()
+                playStat.rejectPlayPromise = null
+            }
         }
         const setCurrentTime = (currentTime) => {
             audioEL.value.currentTime = currentTime
@@ -105,9 +117,10 @@ export default {
         const onAudioEnded = () => {
             console.log("onAudioEnded........")
             playStat.isPlaying = false;
-            playStat.isLoading=false;
+            playStat.isLoading = false;
         }
         const onAudioWaiting = () => {
+            console.log("onAudioWaiting... isLoading")
             playStat.isLoading = true;
         }
         const onAudioCanplay = () => {
@@ -155,7 +168,7 @@ export default {
             percentage = percentage < 1 ? percentage : 1
             pause();
             playStat.playedTime = percentage * playStat.duration
-            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            console.log("duration:" + playStat.duration + ",mouseMove:" + playStat.playedTime)
             audioEL.value.currentTime = playStat.playedTime
         }
         const onDocumentMouseUp = (e) => {
@@ -166,12 +179,12 @@ export default {
             percentage = percentage > 0 ? percentage : 0
             percentage = percentage < 1 ? percentage : 1
             playStat.playedTime = percentage * playStat.duration
-            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
-            if(playStat.playedTime==audioEL.value.duration){
+            console.log("duration:" + playStat.duration + ",mouseMove:" + playStat.playedTime)
+            if (playStat.playedTime == audioEL.value.duration) {
                 console.log("onDocumentMouseUp pause.........")
                 pause();
                 audioEL.value.currentTime = playStat.playedTime
-            }else{
+            } else {
                 console.log("onDocumentMouseUp play.........")
                 audioEL.value.currentTime = playStat.playedTime
                 play();
@@ -193,7 +206,7 @@ export default {
             percentage = percentage < 1 ? percentage : 1
             pause();
             playStat.playedTime = percentage * playStat.duration
-            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            console.log("duration:" + playStat.duration + ",mouseMove:" + playStat.playedTime)
             audioEL.value.currentTime = playStat.playedTime
         }
         const onDocumentTouchEnd = (e) => {
@@ -205,14 +218,14 @@ export default {
             percentage = percentage > 0 ? percentage : 0
             percentage = percentage < 1 ? percentage : 1
             playStat.playedTime = percentage * playStat.duration
-            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            console.log("duration:" + playStat.duration + ",mouseMove:" + playStat.playedTime)
             audioEL.value.currentTime = playStat.playedTime
-            if(audioEL.value.playedTime==audioEL.value.duration){
+            if (audioEL.value.playedTime == audioEL.value.duration) {
                 pause();
-            }else{
+            } else {
                 play();
             }
-           
+
 
         }
         return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart }
