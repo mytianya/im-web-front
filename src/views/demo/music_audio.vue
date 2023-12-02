@@ -5,7 +5,7 @@
                 <el-icon :size="40" color="white">
                     <CaretLeft />
                 </el-icon>
-                <el-icon :size="40" color="white" @click="pause" v-if="isPlaying">
+                <el-icon :size="40" color="white" @click="pause" v-if="playStat.isPlaying">
                     <VideoPause />
                 </el-icon>
                 <el-icon :size="40" color="white" v-else @click="play">
@@ -17,12 +17,11 @@
             </el-col>
             <el-col :span="12">
                 <div class="a-wrapper">
-                    <div class="a-bar">
+                    <div class="a-bar" ref="barWrapEL">
                         <div class="a-loaded" :style="{ width: `${loadProgress * 100}%` }"></div>
                         <div class="a-played" :style="{ width: `${playProgress * 100}%` }">
-                            <span class="a-load-icon">
-                                <!-- <span class="a-loading-icon">
-                                </span> -->
+                            <span class="a-thumb" @mousedown="onThumbMouseDown" @touchstart="onThumbTouchStart">
+                                <svg-icon name="loading" class="a-loading-icon" v-if="playStat.isLoading"></svg-icon>
                             </span>
                         </div>
                     </div>
@@ -36,35 +35,55 @@
 <script lang="ts">
 
 import { onMounted, ref, reactive, computed } from 'vue';
+function getElementViewLeft(element) {
+    let actualLeft = element.offsetLeft
+    let current = element.offsetParent
+    let elementScrollLeft
+    while (current !== null) {
+        actualLeft += current.offsetLeft
+        current = current.offsetParent
+    }
+    elementScrollLeft = document.body.scrollLeft + document.documentElement.scrollLeft
+    return actualLeft - elementScrollLeft
+}
 export default {
     name: "auido-player",
     props: {
         audioUrl: {
             type: String,
-            default: "http://127.0.0.1:8888/v1/music/audioSource/588",
+            default: "http://127.0.0.1:8888/v1/music/audioSource/748",
             required: true,
         },
     },
-    setup(props) {
-        const audioEL= ref(null)
-        const isPlaying = ref(false)
+    setup() {
+        const audioEL = ref(null)
+        const barWrapEL = ref(null)
         const playStat = reactive(
             {
                 duration: 1,
                 loadedTime: 0,
                 playedTime: 0,
+                isPlaying: false,
+                isLoading: false,
             }
         )
         console.log(playStat)
         const play = () => {
-            audioEL.value.play()
-            console.log("play...........")
-            isPlaying.value = true;
+            const playPromise = audioEL.value.play()
+            if (playPromise) {
+                playPromise.then(() => {
+                    playStat.isPlaying = true;
+                }).catch(() => {
+                    playStat.isPlaying = true;
+                    playStat.isLoading = true;
+                })
+            }
         }
         const pause = () => {
             audioEL.value.pause();
             console.log("pause...........")
-            isPlaying.value = false;
+            playStat.isPlaying = false;
+            playStat.isLoading = false;
         }
         const setCurrentTime = (currentTime) => {
             audioEL.value.currentTime = currentTime
@@ -83,25 +102,120 @@ export default {
         const onAudioTimeUpdate = () => {
             playStat.playedTime = audioEL.value.currentTime
         }
+        const onAudioEnded = () => {
+            console.log("onAudioEnded........")
+            playStat.isPlaying = false;
+            playStat.isLoading=false;
+        }
+        const onAudioWaiting = () => {
+            playStat.isLoading = true;
+        }
+        const onAudioCanplay = () => {
+            playStat.isLoading = false;
+        }
         const initAudio = () => {
             console.log(audioEL.value)
+            //获取音频总时长
             audioEL.value.addEventListener("durationchange", onAudioDurationChange);
+            //获取播放下载进度
             audioEL.value.addEventListener('progress', onAudioProgress)
+            //获取播放进度
             audioEL.value.addEventListener('timeupdate', onAudioTimeUpdate)
+            //播放结束
+            audioEL.value.addEventListener('ended', onAudioEnded)
+            //加载等待
+            audioEL.value.addEventListener('waiting', onAudioWaiting)
+            //是否可以播放
+            audioEL.value.addEventListener('canplay', onAudioCanplay)
+
         }
         onMounted(() => {
             initAudio()
         })
         const loadProgress = computed(() => {
-            console.log(playStat.loadedTime / playStat.duration)
             return playStat.loadedTime / playStat.duration
         })
         const playProgress = computed(() => {
-            console.log(playStat.playedTime / playStat.duration)
             return playStat.playedTime / playStat.duration
 
         })
-        return { audioEL, playStat,isPlaying, play, pause, setCurrentTime, loadProgress, playProgress }
+        const onThumbMouseDown = (e) => {
+            console.log(barWrapEL)
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (e.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            document.addEventListener('mousemove', onDocumentMouseMove)
+            document.addEventListener('mouseup', onDocumentMouseUp)
+        }
+        const onDocumentMouseMove = (e) => {
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (e.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            pause();
+            playStat.playedTime = percentage * playStat.duration
+            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            audioEL.value.currentTime = playStat.playedTime
+        }
+        const onDocumentMouseUp = (e) => {
+            document.removeEventListener('mouseup', onDocumentMouseUp)
+            document.removeEventListener('mousemove', onDocumentMouseMove)
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (e.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            playStat.playedTime = percentage * playStat.duration
+            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            if(playStat.playedTime==audioEL.value.duration){
+                console.log("onDocumentMouseUp pause.........")
+                pause();
+                audioEL.value.currentTime = playStat.playedTime
+            }else{
+                console.log("onDocumentMouseUp play.........")
+                audioEL.value.currentTime = playStat.playedTime
+                play();
+            }
+        }
+        const onThumbTouchStart = (e) => {
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (e.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            document.addEventListener('touchmove', onDocumentTouchMove)
+            document.addEventListener('touchend', onDocumentTouchEnd)
+        }
+        const onDocumentTouchMove = (e) => {
+            const touch = e.changedTouches[0]
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (touch.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            pause();
+            playStat.playedTime = percentage * playStat.duration
+            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            audioEL.value.currentTime = playStat.playedTime
+        }
+        const onDocumentTouchEnd = (e) => {
+            document.removeEventListener('touchend', onDocumentTouchEnd)
+            document.removeEventListener('touchmove', onDocumentTouchMove)
+            const touch = e.changedTouches[0]
+            const barWidth = barWrapEL.value.clientWidth
+            let percentage = (touch.clientX - getElementViewLeft(barWrapEL.value)) / barWidth
+            percentage = percentage > 0 ? percentage : 0
+            percentage = percentage < 1 ? percentage : 1
+            playStat.playedTime = percentage * playStat.duration
+            console.log("duration:"+playStat.duration+",mouseMove:"+playStat.playedTime)
+            audioEL.value.currentTime = playStat.playedTime
+            if(audioEL.value.playedTime==audioEL.value.duration){
+                pause();
+            }else{
+                play();
+            }
+           
+
+        }
+        return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart }
     },
 }
 
@@ -145,7 +259,7 @@ export default {
                     background: red;
                 }
 
-                .a-load-icon {
+                .a-thumb {
                     position: absolute;
                     top: 0;
                     margin-top: -5px;
@@ -173,6 +287,7 @@ export default {
                     height: 100%;
                     position: absolute;
                     animation: spin 1s linear infinite;
+                    color: red;
                 }
             }
         }
