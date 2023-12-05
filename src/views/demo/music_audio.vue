@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="12">
                 <div class="a-wrapper">
-                    <div>张三</div>
+                    <div>{{playStat.audioName}}</div>
                     <div class="a-bar" ref="barWrapEL">
                         <div class="a-loaded" :style="{ width: `${loadProgress * 100}%` }"></div>
                         <div class="a-played" :style="{ width: `${playProgress * 100}%` }">
@@ -35,174 +35,14 @@
     
 <script lang="ts">
 
-import { onMounted, ref, reactive, computed, toRefs,nextTick } from 'vue';
+import { onMounted, ref, reactive, computed, toRefs, nextTick } from 'vue';
 import { getElementViewLeft } from '@/utils/music_helper'
-import { listMusic } from '@/api/music'
 export default {
     name: "auido-player",
     props: {
         musicList: {
             type: Array,
-            default: [{
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/561",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "亲密爱人",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/567",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "寂寞在唱歌",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/568",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "吻别",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/569",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "永远到底有多远",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/570",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "大约在冬季",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/571",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "橄榄树",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/572",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "我愿意",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/573",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "曾经心疼",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/577",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "海浪",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/578",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "爱如潮水",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/579",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "那个傻瓜爱过你",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/580",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "爱上一个不回家的人",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/581",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "爱你一万年",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/588",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "一场游戏一场梦",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/589",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "为爱犯了罪",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/590",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "最远的你是我最近的爱",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/592",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "执着",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/593",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "爱你在心口难开",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/596",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "月亮偷着哭",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            },
-            {
-                "audioUrl": "http://127.0.0.1:8888/v1/music/audioSource/598",
-                "lyricUrl": "",
-                "coverUrl": "",
-                "musicName": "那一场风花雪月的事",
-                "musicSinger": "",
-                "audioType": "audio/wav"
-            }],
+            default: [],
             required: true,
         }
     },
@@ -228,11 +68,17 @@ export default {
         )
         if (musicList.value.length > 0) {
             playStat.audioUrl = musicList.value[0].audioUrl
-            playStat.audioName = musicList.value[0].audioName
+            playStat.audioName = musicList.value[0].musicName
             playStat.lyricUrl = musicList.value[0].lyricUrl
-            playStat.singer = musicList.value[0].singer
+            playStat.singer = musicList.value[0].musicSinger
         }
         const play = () => {
+            if (playStat.audioUrl == '') {
+                playStat.audioUrl = musicList.value[0].audioUrl
+                playStat.audioName = musicList.value[0].musicName
+                playStat.lyricUrl = musicList.value[0].lyricUrl
+                playStat.singer = musicList.value[0].singer
+            }
             const promise = audioEL.value.play()
             if (promise) {
                 return playStat.audioPlayPromise = new Promise((resolve, reject) => {
@@ -405,19 +251,19 @@ export default {
                 play();
             })
         }
-        const computedIndex=(playType)=>{
+        const computedIndex = (playType) => {
             let total = musicList.value.length
-            if("prev"==playType){
-                if(playStat.curIndex<=0){
-                    playStat.curIndex=total-1;
-                }else{
+            if ("prev" == playType) {
+                if (playStat.curIndex <= 0) {
+                    playStat.curIndex = total - 1;
+                } else {
                     playStat.curIndex--;
                 }
             }
-            if("next"==playType){
-                if(playStat.curIndex>=total){
-                    playStat.curIndex=0;
-                }else{
+            if ("next" == playType) {
+                if (playStat.curIndex >= total) {
+                    playStat.curIndex = 0;
+                } else {
                     playStat.curIndex++;
                 }
             }
@@ -429,7 +275,7 @@ export default {
             playStat.loadedTime = 0;
             playStat.isPlaying = false;
             playStat.audioUrl = musicList.value[playStat.curIndex].audioUrl
-            playStat.audioName = musicList.value[playStat.curIndex].audioName
+            playStat.audioName = musicList.value[playStat.curIndex].musicName
             playStat.lyricUrl = musicList.value[playStat.curIndex].lyricUrl
             playStat.singer = musicList.value[playStat.curIndex].singer
             playStat.coverUrl = musicList.value[playStat.curIndex].coverUrl
@@ -442,7 +288,7 @@ export default {
             playStat.loadedTime = 0;
             playStat.isPlaying = false;
             playStat.audioUrl = musicList.value[playStat.curIndex].audioUrl
-            playStat.audioName = musicList.value[playStat.curIndex].audioName
+            playStat.audioName = musicList.value[playStat.curIndex].musicName
             playStat.lyricUrl = musicList.value[playStat.curIndex].lyricUrl
             playStat.singer = musicList.value[playStat.curIndex].singer
             playStat.coverUrl = musicList.value[playStat.curIndex].coverUrl
