@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="12">
                 <div class="a-wrapper">
-                    <div>{{playStat.audioName}}</div>
+                    <div>{{currentMusic.musicName}}</div>
                     <div class="a-bar" ref="barWrapEL">
                         <div class="a-loaded" :style="{ width: `${loadProgress * 100}%` }"></div>
                         <div class="a-played" :style="{ width: `${playProgress * 100}%` }">
@@ -29,7 +29,7 @@
                 </div>
             </el-col>
         </el-row>
-        <audio :src="playStat.audioUrl" ref="audioEL"></audio>
+        <audio :src="currentMusic.audioUrl" ref="audioEL"></audio>
     </div>
 </template>
     
@@ -50,6 +50,13 @@ export default {
         const audioEL = ref(null)
         const barWrapEL = ref(null)
         const { musicList } = toRefs(props)
+        const currentMusic=computed(()=>{
+            if(musicList.value.length>0){
+                return musicList.value[playStat.curIndex]
+            }else{
+                return {}
+            }
+        })
         const playStat = reactive(
             {
                 duration: 1,
@@ -59,26 +66,10 @@ export default {
                 isLoading: false,
                 audioPlayPromise: Promise.resolve(),
                 rejectPlayPromise: null,
-                audioUrl: '',
-                audioName: '',
-                lyricUrl: '',
-                singer: '',
-                curIndex: 0
+                curIndex: 0,
             }
         )
-        if (musicList.value.length > 0) {
-            playStat.audioUrl = musicList.value[0].audioUrl
-            playStat.audioName = musicList.value[0].musicName
-            playStat.lyricUrl = musicList.value[0].lyricUrl
-            playStat.singer = musicList.value[0].musicSinger
-        }
         const play = () => {
-            if (playStat.audioUrl == '') {
-                playStat.audioUrl = musicList.value[0].audioUrl
-                playStat.audioName = musicList.value[0].musicName
-                playStat.lyricUrl = musicList.value[0].lyricUrl
-                playStat.singer = musicList.value[0].singer
-            }
             const promise = audioEL.value.play()
             if (promise) {
                 return playStat.audioPlayPromise = new Promise((resolve, reject) => {
@@ -274,11 +265,6 @@ export default {
             playStat.playedTime = 0;
             playStat.loadedTime = 0;
             playStat.isPlaying = false;
-            playStat.audioUrl = musicList.value[playStat.curIndex].audioUrl
-            playStat.audioName = musicList.value[playStat.curIndex].musicName
-            playStat.lyricUrl = musicList.value[playStat.curIndex].lyricUrl
-            playStat.singer = musicList.value[playStat.curIndex].singer
-            playStat.coverUrl = musicList.value[playStat.curIndex].coverUrl
             thenPlay()
         }
         const next = () => {
@@ -287,14 +273,9 @@ export default {
             playStat.playedTime = 0;
             playStat.loadedTime = 0;
             playStat.isPlaying = false;
-            playStat.audioUrl = musicList.value[playStat.curIndex].audioUrl
-            playStat.audioName = musicList.value[playStat.curIndex].musicName
-            playStat.lyricUrl = musicList.value[playStat.curIndex].lyricUrl
-            playStat.singer = musicList.value[playStat.curIndex].singer
-            playStat.coverUrl = musicList.value[playStat.curIndex].coverUrl
             thenPlay()
         }
-        return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart, prev, next }
+        return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart, prev, next,currentMusic }
     },
 }
 
