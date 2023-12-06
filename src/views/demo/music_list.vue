@@ -16,7 +16,7 @@
             </el-table>
         </div>
         <div>
-            <AudioPlayer :musicList="musicData" />
+            <AudioPlayer :musicList="musicData" ref="audioPlayerEL" />
         </div>
     </div>
 </template>
@@ -28,8 +28,11 @@ import { listMusic } from '@/api/music';
 import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
 
 const musicData = ref()
+const audioPlayerEL=ref(null)
 const play = (index, music) => {
     console.log(index, music)
+    console.log(audioPlayerEL)
+    audioPlayerEL.value.changeIndex(index)
 }
 const total = ref()
 var tempTableLayerData = []

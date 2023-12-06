@@ -35,7 +35,7 @@
     
 <script lang="ts">
 
-import { onMounted, ref, reactive, computed, toRefs, nextTick } from 'vue';
+import { onMounted, ref, reactive, computed, toRefs, nextTick,defineExpose} from 'vue';
 import { getElementViewLeft } from '@/utils/music_helper'
 export default {
     name: "auido-player",
@@ -57,6 +57,10 @@ export default {
                 return {}
             }
         })
+        const changeIndex=(index:number)=>{
+            playStat.curIndex=index
+            thenPlay()
+        }
         const playStat = reactive(
             {
                 duration: 1,
@@ -243,7 +247,7 @@ export default {
             })
         }
         const computedIndex = (playType) => {
-            let total = musicList.value.length
+            let total = musicList.value.length-1
             if ("prev" == playType) {
                 if (playStat.curIndex <= 0) {
                     playStat.curIndex = total - 1;
@@ -275,7 +279,8 @@ export default {
             playStat.isPlaying = false;
             thenPlay()
         }
-        return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart, prev, next,currentMusic }
+        defineExpose({changeIndex,})
+        return { audioEL, barWrapEL, playStat, play, pause, setCurrentTime, loadProgress, playProgress, onThumbMouseDown, onThumbTouchStart, prev, next,currentMusic ,changeIndex}
     },
 }
 
