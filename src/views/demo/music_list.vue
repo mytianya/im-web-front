@@ -30,8 +30,6 @@ import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
 const musicData = ref()
 const audioPlayerEL=ref(null)
 const play = (index, music) => {
-    console.log(index, music)
-    console.log(audioPlayerEL)
     audioPlayerEL.value.changeIndex(index)
 }
 const total = ref()
@@ -40,7 +38,6 @@ const pageSize = 30
 var pageIndex = 1
 const loadMore = () => {
     // 每页条数
-    console.log(pageIndex)
     // 如果加载结束就返回
     if (pageIndex * pageSize > total) return
     listMusic({ "pageIndex": pageIndex, "pageSize": pageSize }).then(res => {
@@ -49,9 +46,8 @@ const loadMore = () => {
         //形成最后的数据给table组件使用
         musicData.value = tempTableLayerData
         pageIndex++
-        console.log(pageIndex)
+        total.value=res.data.PageInfo.Total
     })
-
 }
 </script>
     
