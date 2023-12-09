@@ -1,7 +1,8 @@
 <template>
     <div>
         <div>
-            <el-table :data="musicData" stripe style="width: 100%" max-height="600"  v-el-table-infinite-scroll="loadMore" width="600px">
+            <el-table :data="musicData" stripe style="width: 100%"  v-el-table-infinite-scroll="loadMore"
+               >
                 <el-table-column prop="musicName" label="歌名" />
                 <el-table-column prop="musicSinger" label="歌手" />
                 <el-table-column prop="duration" label="时长" />
@@ -28,7 +29,7 @@ import { listMusic } from '@/api/music';
 import { default as vElTableInfiniteScroll } from "el-table-infinite-scroll";
 
 const musicData = ref()
-const audioPlayerEL=ref(null)
+const audioPlayerEL = ref(null)
 const play = (index, music) => {
     audioPlayerEL.value.changeIndex(index)
 }
@@ -41,12 +42,14 @@ const loadMore = () => {
     // 如果加载结束就返回
     if (pageIndex * pageSize > total) return
     listMusic({ "pageIndex": pageIndex, "pageSize": pageSize }).then(res => {
+        console.log(res.data)
         const mergeData = tempTableLayerData.concat(res.data.MusicList)
         tempTableLayerData = mergeData
         //形成最后的数据给table组件使用
         musicData.value = tempTableLayerData
         pageIndex++
-        total.value=res.data.PageInfo.Total
+        total.value = res.data.PageInfo.Total
+        console.log(total)
     })
 }
 </script>
